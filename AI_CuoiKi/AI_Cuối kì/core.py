@@ -43,7 +43,7 @@ class KnapsackProblem:
 class KnapsackResult:
     """
     Kết quả trả về CHUẨN cho mọi thuật toán.
-    Các thuật toán (Greedy, Bat, A*, ...) đều phải trả về kiểu này.
+
     """
     solution: List[int]      # Vector nhị phân: solution[i]=1 nếu chọn vật phẩm i
     value: float             # Tổng giá trị đạt được
