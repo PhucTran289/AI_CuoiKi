@@ -1,64 +1,17 @@
 
-# ──────────────────────────────────────────────
-# 5. Kiểm thử nhanh module core
-# ──────────────────────────────────────────────
 import time
 import heapq
 from typing import List, Optional
 from core import (
     KnapsackProblem, KnapsackResult,
     evaluate, is_feasible
-)
 
-# if __name__ == "__main__":
-#     # Ví dụ đơn giản
-#     problem = create_problem(
-#         capacity=15,
-#         weights=[2, 3, 4, 5, 6],
-#         values =[3, 4, 5, 8, 9],
-#         names  =["A", "B", "C", "D", "E"]
-#     )
-#     print_problem(problem)
-
-#     # Kiểm tra hàm evaluate
-#     sol = [1, 1, 0, 1, 0]
-#     v, w = evaluate(problem, sol)
-#     print(f"Nghiệm {sol}: value={v}, weight={w}, feasible={is_feasible(problem, sol)}")
-
-#     # Kiểm tra repair
-#     bad_sol = [1, 1, 1, 1, 1]
-#     print(f"\nNghiệm vi phạm: {bad_sol}, weight={evaluate(problem, bad_sol)[1]}")
-#     fixed = repair_solution(problem, bad_sol)
-#     print(f"Sau repair    : {fixed}, weight={evaluate(problem, fixed)[1]}")
-# """
-# greedy.py - Thuật toán Greedy cho bài toán Knapsack
-# ====================================================
-# Cài đặt 2 biến thể:
-#   1. GreedyRatio   — Tham lam theo tỉ lệ value/weight (cổ điển)
-#   2. GreedyBestFirstSearch (GBFS) — Tìm kiếm Best-First dùng heuristic
-# """
 # ══════════════════════════════════════════════════════════════
 # PHẦN 1: GREEDY RATIO (Tham lam theo tỉ lệ value/weight)
 # ══════════════════════════════════════════════════════════════
 
 def greedy_ratio(problem: KnapsackProblem) -> KnapsackResult:
-    """
-    Thuật toán Greedy cổ điển cho 0/1 Knapsack.
-
-    Chiến lược:
-        Sắp xếp vật phẩm theo tỉ lệ value/weight giảm dần.
-        Lần lượt chọn vật phẩm nếu còn đủ sức chứa.
-
-    Độ phức tạp:
-        Thời gian : O(n log n)  (do sắp xếp)
-        Không gian: O(n)
-
-    Args:
-        problem: Bài toán knapsack cần giải
-
-    Returns:
-        KnapsackResult với thông tin nghiệm tìm được
-    """
+  
     start = time.perf_counter()
 
     n = problem.n
@@ -146,17 +99,6 @@ def greedy_best_first_search(problem: KnapsackProblem,
                               max_nodes: int = 100_000) -> KnapsackResult:
     """
     Greedy Best-First Search (GBFS) cho 0/1 Knapsack.
-
-    Ý tưởng:
-        - Duyệt cây nhị phân (mỗi nút = quyết định chọn/bỏ 1 vật).
-        - Tại mỗi bước MỞ RỘNG nút có heuristic tốt nhất (upper-bound cao nhất).
-        - Heuristic h(n) = upper-bound fractional knapsack từ độ sâu hiện tại.
-        - Cắt nhánh (pruning): bỏ qua nút có upper-bound ≤ nghiệm tốt nhất hiện tại.
-
-    Khác với A*:
-        GBFS chỉ dùng h(n), không cộng g(n) (chi phí đã đi).
-        → Nhanh hơn A* nhưng không đảm bảo tối ưu.
-
     Độ phức tạp (worst case):
         Thời gian : O(2^n) — nhưng pruning giúp cắt nhiều nhánh
         Không gian: O(2^n) — hàng đợi ưu tiên
@@ -275,16 +217,7 @@ def greedy_best_first_search(problem: KnapsackProblem,
 
 def solve_greedy(problem: KnapsackProblem,
                  method: str = "ratio") -> KnapsackResult:
-    """
-    Hàm gọi thuật toán Greedy dạng thống nhất.
-
-    Args:
-        problem: Bài toán knapsack
-        method : "ratio" | "gbfs"
-
-    Returns:
-        KnapsackResult
-    """
+    
     method = method.lower().strip()
     if method == "ratio":
         return greedy_ratio(problem)
