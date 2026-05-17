@@ -4,7 +4,7 @@ import heapq
 from typing import List, Optional
 from core import (
     KnapsackProblem, KnapsackResult,
-    evaluate, is_feasible
+    evaluate, is_feasible)
 
 # ══════════════════════════════════════════════════════════════
 # PHẦN 1: GREEDY RATIO (Tham lam theo tỉ lệ value/weight)
@@ -232,7 +232,7 @@ def solve_greedy(problem: KnapsackProblem,
 # ══════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
-    from core import (create_problem, generate_random_problem, print_problem, compare_results)
+    from core import create_problem, generate_random_problem, print_problem, compare_results
 
     # ── Ví dụ 1: bài toán nhỏ ─────────────────────────────────
     print(">>> Ví dụ 1: Bài toán 5 vật phẩm")
