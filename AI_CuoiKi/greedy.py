@@ -17,19 +17,6 @@ def greedy_ratio(problem: KnapsackProblem) -> KnapsackResult:
     """
     Thuật toán Greedy cổ điển cho 0/1 Knapsack.
 
-    Chiến lược:
-        Sắp xếp vật phẩm theo tỉ lệ value/weight giảm dần.
-        Lần lượt chọn vật phẩm nếu còn đủ sức chứa.
-
-    Độ phức tạp:
-        Thời gian : O(n log n)  (do sắp xếp)
-        Không gian: O(n)
-
-    Args:
-        problem: Bài toán knapsack cần giải
-
-    Returns:
-        KnapsackResult với thông tin nghiệm tìm được
     """
     start = time.perf_counter()
 
@@ -73,10 +60,7 @@ def _upper_bound(problem: KnapsackProblem, depth: int,
                  sorted_indices: List[int]) -> float:
     """
     Tính upper-bound bằng fractional knapsack cho các vật từ 'depth' trở đi.
-    Đây là hàm heuristic h(n) của GBFS — đánh giá tiềm năng tối đa còn lại.
-
-    Returns:
-        Giá trị upper-bound (số thực)
+  Hàm heuristic h(n) của GBFS 
     """
     bound = current_value
     cap   = remaining_cap
