@@ -1,8 +1,5 @@
 """
 core.py - Phần core chung cho bài toán Knapsack
-================================================
-Định nghĩa cấu trúc dữ liệu, hàm đọc input, kiểm tra nghiệm,
-và tính toán kết quả dùng chung cho TẤT CẢ thuật toán.
 """
 
 from dataclasses import dataclass, field
@@ -42,7 +39,7 @@ class KnapsackProblem:
 @dataclass
 class KnapsackResult:
     """
-    Kết quả trả về CHUẨN cho mọi thuật toán.
+  
     Các thuật toán (Greedy, Bat, A*, ...) đều phải trả về kiểu này.
     """
     solution: List[int]      # Vector nhị phân: solution[i]=1 nếu chọn vật phẩm i
@@ -83,12 +80,7 @@ def create_problem(capacity: float, weights: List[float], values: List[float],
     """
     Tạo bài toán knapsack từ danh sách trọng lượng và giá trị.
 
-    Args:
-        capacity: Sức chứa tối đa
-        weights : Danh sách trọng lượng
-        values  : Danh sách giá trị
-        names   : Tên vật phẩm (tùy chọn)
-
+   
     Returns:
         KnapsackProblem
     """
@@ -111,12 +103,7 @@ def generate_random_problem(n: int, max_weight: float = 20.0,
     """
     Sinh bài toán ngẫu nhiên để kiểm thử.
 
-    Args:
-        n             : Số vật phẩm
-        max_weight    : Trọng lượng tối đa mỗi vật
-        max_value     : Giá trị tối đa mỗi vật
-        capacity_ratio: Tỉ lệ sức chứa / tổng trọng lượng
-        seed          : Random seed (tái lập kết quả)
+  
     """
     rng = random.Random(seed)
     weights = [round(rng.uniform(1, max_weight), 2) for _ in range(n)]
@@ -161,7 +148,7 @@ def repair_solution(problem: KnapsackProblem, solution: List[int]) -> List[int]:
     """
     Sửa nghiệm vi phạm trọng lượng bằng cách loại bỏ vật phẩm
     có ratio thấp nhất cho đến khi hợp lệ.
-    Dùng cho Bat Algorithm khi cần 'repair' nghiệm nhị phân.
+    
     """
     sol = solution[:]
     _, w = evaluate(problem, sol)
