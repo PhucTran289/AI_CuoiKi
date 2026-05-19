@@ -1,12 +1,4 @@
-"""
-gui.py  —  Knapsack Solver  v3.0
-=================================
-Giao diện 3 bước:  Import Data  →  Result  →  Analysis
-Thiết kế: dark-teal wizard, PyQt6 + matplotlib
 
-Yêu cầu:
-    pip install PyQt6 matplotlib
-"""
 
 from __future__ import annotations
 import sys, os, csv, io, math
