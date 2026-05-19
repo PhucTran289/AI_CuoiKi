@@ -17,21 +17,20 @@ except ImportError:
  
  
 # ══════════════════════════════════════════════════════════════════
-#  HELPER: V-shaped transfer function (binary BA chuẩn)
-#  Tham chiếu: Mirjalili & Lewis (2013) – Binary BA
+#  HELPER: V-shaped transfer function 
 # ══════════════════════════════════════════════════════════════════
 def _v_transfer(v: float) -> float:
     """
-    V-shaped transfer: xác suất flip bit = |tanh(v)|.
+    V-shaped transfer: xác suất flip bit.
     - v lớn (xa 0) → flip gần chắc chắn  (exploration)
-    - v nhỏ (gần 0) → flip hiếm           (exploitation)
-    Khác sigmoid: luôn đối xứng quanh 0, không thiên vị 0 hay 1.
+    - v nhỏ (gần 0) → flip hiếm (exploitation)
+    
     """
     return abs(math.tanh(v))
  
  
 def _flip_bit(pos: int, v: float, rng: _random.Random) -> int:
-    """Lật bit theo xác suất V(v), giữ nguyên nếu không lật."""
+   
     return 1 - pos if rng.random() < _v_transfer(v) else pos
  
  
@@ -50,8 +49,6 @@ def _repair(solution: List[int], problem: KnapsackProblem,
     """
     1. Nếu vượt capacity: xoá item có ratio thấp nhất cho đến khi hợp lệ.
     2. Thử thêm item chưa chọn (sort ratio cao → thấp) nếu còn chỗ.
-    Đây là standard repair cho binary knapsack, không làm mất tính
-    đa dạng quần thể vì bước 2 vẫn greedy deterministic.
     """
     sol = solution[:]
     items = problem.items
@@ -59,10 +56,10 @@ def _repair(solution: List[int], problem: KnapsackProblem,
     # Bước 1: remove nếu overweight
     weight = sum(items[i].weight for i in range(problem.n) if sol[i])
     if weight > problem.capacity:
-        # Sắp xếp item đang chọn theo ratio tăng dần → xoá từ tệ nhất
+       
         selected = sorted(
             [i for i in range(problem.n) if sol[i]],
-            key=lambda i: items[i].ratio   # ratio = value/weight
+            key=lambda i: items[i].ratio   
         )
         for i in selected:
             if weight <= problem.capacity:
@@ -74,7 +71,7 @@ def _repair(solution: List[int], problem: KnapsackProblem,
     remaining = problem.capacity - weight
     not_selected = sorted(
         [i for i in range(problem.n) if not sol[i]],
-        key=lambda i: -items[i].ratio  # ratio cao nhất trước
+        key=lambda i: -items[i].ratio  
     )
     for i in not_selected:
         if items[i].weight <= remaining:
@@ -88,7 +85,7 @@ def _repair(solution: List[int], problem: KnapsackProblem,
 #  HELPER: Khởi tạo quần thể tốt hơn random thuần
 # ══════════════════════════════════════════════════════════════════
 def _greedy_solution(problem: KnapsackProblem) -> List[int]:
-    """Greedy theo ratio — nghiệm baseline chất lượng cao."""
+    
     sol     = [0] * problem.n
     remain  = problem.capacity
     order   = sorted(range(problem.n), key=lambda i: -problem.items[i].ratio)
@@ -101,11 +98,7 @@ def _greedy_solution(problem: KnapsackProblem) -> List[int]:
  
 def _init_population(n_bats: int, problem: KnapsackProblem,
                      rng: _random.Random) -> List[List[int]]:
-    """
-    Khởi tạo đa dạng:
-      - 1 nghiệm greedy ratio (đảm bảo có 1 cái tốt ngay từ đầu)
-      - n_bats-1 nghiệm random + repair
-    """
+   
     population = []
  
     # Nghiệm greedy làm anchor
@@ -114,7 +107,7 @@ def _init_population(n_bats: int, problem: KnapsackProblem,
  
     # Phần còn lại: random với density ngẫu nhiên + repair
     for _ in range(n_bats - 1):
-        # Density ∈ [0.2, 0.6] để không quá thưa cũng không quá đặc
+      
         density = rng.uniform(0.2, 0.6)
         sol = [1 if rng.random() < density else 0 for _ in range(problem.n)]
         sol = _repair(sol, problem, rng)
@@ -133,7 +126,7 @@ class _Bat:
     def __init__(self, position: List[int], value: float, weight: float,
                  loudness: float, pulse_rate: float):
         self.position   = position
-        self.velocity   = [0.0] * len(position)   # continuous velocity
+        self.velocity   = [0.0] * len(position)   
         self.value      = value
         self.weight     = weight
         self.freq       = 0.0
@@ -148,13 +141,13 @@ def bat_algorithm(
     problem: KnapsackProblem,
     n_bats:        int   = 30,
     max_iter:      int   = 500,
-    alpha:         float = 0.97,   # loudness decay  (sách: 0.97)
-    gamma:         float = 0.10,   # pulse rate grow (sách: 0.10)
-    f_min:         float = 0.0,    # frequency min   (sách: 0)
-    f_max:         float = 2.0,    # frequency max   (sách: 2)
-    A0:            float = 1.0,    # loudness ban đầu
-    r0:            float = 1.0,    # pulse rate ban đầu (tối đa)
-    mutation_rate: float = 0.02,   # xác suất đột biến nhỏ
+    alpha:         float = 0.97,   
+    gamma:         float = 0.10,  
+    f_min:         float = 0.0,   
+    f_max:         float = 2.0,   
+    A0:            float = 1.0,    
+    r0:            float = 1.0,   
+    mutation_rate: float = 0.02,   
     seed:          Optional[int] = None,
 ) -> "KnapsackResult":
         t_start = time.perf_counter()
@@ -209,17 +202,16 @@ def bat_algorithm(
                 bat.velocity[j] += (bat.position[j] - best_pos[j]) * fi
  
             # c. Position update bằng V-shaped transfer
-            #    Chỉ lật bit theo xác suất |tanh(v_j)|
-            #    → GIỮ LẠI thông tin position cũ (FIX 3)
+
             new_pos = [_flip_bit(bat.position[j], bat.velocity[j], rng)
                        for j in range(n)]
  
             # d. Local search quanh best nếu rand > r
-            #    (đúng theo sách: if rand > r → local search)
+           
             if rng.random() > bat.pulse_rate:
-                # Lấy best làm gốc, lật ngẫu nhiên vài bit
+             
                 new_pos = best_pos[:]
-                sigma   = 0.1 * A_global   # scaling giảm dần theo A
+                sigma   = 0.1 * A_global   
                 n_flip  = max(1, int(sigma * n))
                 flip_idx = rng.sample(range(n), min(n_flip, n))
                 for j in flip_idx:
@@ -231,10 +223,10 @@ def bat_algorithm(
             # f. Đánh giá
             new_val, new_wt = _evaluate(new_pos, problem)
  
-            # g. ── FIX 1: Điều kiện chấp nhận ĐÚNG theo Yang ──
+            # g.
             #    Chấp nhận nếu nghiệm MỚI TỐT HƠN và rand > A
-            #    (bài toán MAX: new_val >= bat.value)
-            #    Khi A→0: rand > A luôn True → luôn đớp nghiệm tốt hơn
+          
+           
             if new_val >= bat.value and rng.random() > A_global:
                 bat.position = new_pos
                 bat.value    = new_val
